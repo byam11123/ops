@@ -13,10 +13,13 @@ import { systemRouter } from './src/server/routes/systemRoutes';
 import { itChecklistRouter } from './src/server/routes/itChecklistRoutes';
 import purchaseFMSRoutes from './src/server/routes/purchaseFMSRoutes';
 
-async function startServer() {
-  const app = express();
-  const PORT = 3000;
+const app = express();
+const PORT = process.env.PORT || 3000;
 
+// Export app for Vercel Serverless Functions
+export default app;
+
+async function startServer() {
   // JSON and URL-encoded body parsers
   app.use(express.json({ limit: '15mb' }));
   app.use(express.urlencoded({ extended: true, limit: '15mb' }));
@@ -64,13 +67,13 @@ async function startServer() {
   });
 
   // Vite Middleware for client frontend
-  if (process.env.NODE_ENV !== 'production') {
+  if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: 'spa',
     });
     app.use(vite.middlewares);
-  } else {
+  } else if (!process.env.VERCEL) {
     const distPath = path.join(process.cwd(), 'dist');
     app.use(express.static(distPath));
     app.get('*', (_req, res) => {
@@ -78,9 +81,16 @@ async function startServer() {
     });
   }
 
-  app.listen(PORT, '0.0.0.0', () => {
-    console.log(`[OpsFlow 360] Server active on http://0.0.0.0:${PORT}`);
-  });
+  if (!process.env.VERCEL) {
+    app.listen(PORT, '0.0.0.0', () => {
+      console.log(`[OpsFlow 360] Server active on http://0.0.0.0:${PORT}`);
+    });
+  }
 }
 
-startServer();
+if (!process.env.VERCEL) {
+  startServer();
+} else {
+  // If on Vercel, just run the setup without listening
+  startServer().catch(console.error);
+}
