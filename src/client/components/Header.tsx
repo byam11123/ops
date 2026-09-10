@@ -57,7 +57,7 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, onSelectTab }) => {
   ];
 
   return (
-    <header className="sticky top-0 z-40 bg-white border-b border-slate-200 shadow-xs">
+    <header className="sticky top-0 z-40 bg-white border-b border-slate-200 shadow-xs print:hidden">
       {/* Top Banner: Enterprise Branding & Persona Switcher */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">

@@ -31,7 +31,7 @@ import {
   User
 } from 'lucide-react';
 
-function DelayedTaskReport({ items }: { items: PurchasePipelineItem[] }) {
+function DelayedTaskReport({ items, dateStart, dateEnd }: { items: PurchasePipelineItem[], dateStart: string, dateEnd: string }) {
   const [isPrintMode, setIsPrintMode] = useState(false);
   
   const delayedStages: any[] = [];
@@ -208,6 +208,11 @@ function DelayedTaskReport({ items }: { items: PurchasePipelineItem[] }) {
           <div className="hidden print:block mb-6">
           <h1 className="text-2xl font-bold text-slate-800">OpsFlow 360 - Purchase FMS</h1>
           <p className="text-slate-500 font-medium mt-1">Pending & Delayed Task Report — {new Date().toLocaleDateString()}</p>
+          {(dateStart || dateEnd) && (
+            <p className="text-slate-500 text-sm mt-1">
+              Date Range: {dateStart ? new Date(dateStart).toLocaleDateString() : 'Start'} to {dateEnd ? new Date(dateEnd).toLocaleDateString() : 'End'}
+            </p>
+          )}
         </div>
         </>
       )}
@@ -295,22 +300,22 @@ function DelayedTaskReport({ items }: { items: PurchasePipelineItem[] }) {
             </button>
           </div>
         </div>
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-slate-200 text-xs">
+        <div className="overflow-x-auto print:overflow-visible">
+          <table className="min-w-full divide-y divide-slate-200 text-xs print:text-[9px]">
             <thead className="bg-slate-50">
               <tr>
-                <th className="px-4 py-3 text-left font-semibold text-slate-600">S.No</th>
-                <th className="px-4 py-3 text-left font-semibold text-slate-600">FMS Name</th>
-                <th className="px-4 py-3 text-left font-semibold text-slate-600">Stage / Checkpoint</th>
-                <th className="px-4 py-3 text-left font-semibold text-slate-600">Stage Owner (Who)</th>
-                <th className="px-4 py-3 text-left font-semibold text-slate-600">Amount</th>
-                <th className="px-4 py-3 text-left font-semibold text-slate-600">Payment Method</th>
-                <th className="px-4 py-3 text-left font-semibold text-slate-600">PO / Indent No.</th>
-                <th className="px-4 py-3 text-left font-semibold text-slate-600">Site</th>
-                <th className="px-4 py-3 text-left font-semibold text-slate-600">Delay Time</th>
-                <th className="px-4 py-3 text-center font-semibold text-slate-600">Max Delay (Days)</th>
-                <th className="px-4 py-3 text-center font-semibold text-slate-600">Status</th>
-                <th className="px-4 py-3 text-center font-semibold text-slate-600">Action</th>
+                <th className="px-4 py-3 print:px-2 text-left font-semibold text-slate-600 print:px-2">S.No</th>
+                <th className="px-4 py-3 print:px-2 text-left font-semibold text-slate-600">FMS Name</th>
+                <th className="px-4 py-3 print:px-2 text-left font-semibold text-slate-600">Stage / Checkpoint</th>
+                <th className="px-4 py-3 print:px-2 text-left font-semibold text-slate-600">Stage Owner (Who)</th>
+                <th className="px-4 py-3 print:px-2 text-left font-semibold text-slate-600">Amount</th>
+                <th className="px-4 py-3 print:px-2 text-left font-semibold text-slate-600">Payment Method</th>
+                <th className="px-4 py-3 print:px-2 text-left font-semibold text-slate-600">PO / Indent No.</th>
+                <th className="px-4 py-3 print:px-2 text-left font-semibold text-slate-600">Site</th>
+                <th className="px-4 py-3 print:px-2 text-left font-semibold text-slate-600">Delay Time</th>
+                <th className="px-4 py-3 print:px-2 text-center font-semibold text-slate-600">Max Delay (Days)</th>
+                <th className="px-4 py-3 print:px-2 text-center font-semibold text-slate-600">Status</th>
+                <th className="px-4 py-3 print:px-2 text-center font-semibold text-slate-600">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 bg-white">
@@ -321,32 +326,32 @@ function DelayedTaskReport({ items }: { items: PurchasePipelineItem[] }) {
               ) : (
                 delayedStages.map((stage, idx) => (
                   <tr key={`${stage.id}-${idx}`} className={`transition-colors ${stage.isPending ? 'bg-amber-50/30 hover:bg-amber-100/40' : 'bg-rose-50/30 hover:bg-rose-100/40'}`}>
-                    <td className="px-4 py-3 text-slate-500 font-medium">{idx + 1}</td>
-                    <td className="px-4 py-3 text-slate-700 font-semibold">{stage.fmsName}</td>
-                    <td className="px-4 py-3 text-slate-900 font-medium max-w-[200px] truncate" title={stage.stageName}>
+                    <td className="px-4 py-3 print:px-2 text-slate-500 font-medium">{idx + 1}</td>
+                    <td className="px-4 py-3 print:px-2 text-slate-700 font-semibold">{stage.fmsName}</td>
+                    <td className="px-4 py-3 print:px-2 text-slate-900 font-medium max-w-[200px] truncate" title={stage.stageName}>
                       {stage.stageName}
                     </td>
-                    <td className="px-4 py-3 text-slate-700">{stage.responsible}</td>
-                    <td className="px-4 py-3 font-mono text-slate-600">{stage.amount !== '-' ? `₹${parseFloat(stage.amount).toLocaleString('en-IN')}` : '-'}</td>
-                    <td className="px-4 py-3 text-slate-600">{stage.paymentMethod}</td>
-                    <td className="px-4 py-3 font-mono text-slate-600">{stage.poNumber}</td>
-                    <td className="px-4 py-3 text-slate-600">{stage.siteName}</td>
+                    <td className="px-4 py-3 print:px-2 text-slate-700">{stage.responsible}</td>
+                    <td className="px-4 py-3 print:px-2 font-mono text-slate-600">{stage.amount !== '-' ? `₹${parseFloat(stage.amount).toLocaleString('en-IN')}` : '-'}</td>
+                    <td className="px-4 py-3 print:px-2 text-slate-600">{stage.paymentMethod}</td>
+                    <td className="px-4 py-3 print:px-2 font-mono text-slate-600">{stage.poNumber}</td>
+                    <td className="px-4 py-3 print:px-2 text-slate-600">{stage.siteName}</td>
                     <td className="px-4 py-3">
                       <span className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-md font-bold ${stage.isPending ? 'bg-amber-100 text-amber-700 border border-amber-200' : 'bg-rose-100 text-rose-700 border border-rose-200'}`}>
                          {stage.delay}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-center font-bold text-rose-600">
+                    <td className="px-4 py-3 print:px-2 text-center font-bold text-rose-600">
                       {stage.delayInDays ? stage.delayInDays.toFixed(1) : '-'}
                     </td>
-                    <td className="px-4 py-3 text-center">
+                    <td className="px-4 py-3 print:px-2 text-center">
                       {stage.isPending ? (
                         <span className="text-[10px] uppercase font-bold tracking-wider text-amber-600">Pending</span>
                       ) : (
                         <span className="text-[10px] uppercase font-bold tracking-wider text-rose-600">Done late</span>
                       )}
                     </td>
-                    <td className="px-4 py-3 text-center">
+                    <td className="px-4 py-3 print:px-2 text-center">
                       {stage.isPending && (
                         <button className="text-indigo-600 hover:text-indigo-800 font-semibold flex items-center gap-1 mx-auto bg-indigo-50 px-2 py-1 rounded transition-colors">
                           <BellRing className="h-3 w-3" /> Remind
@@ -363,21 +368,21 @@ function DelayedTaskReport({ items }: { items: PurchasePipelineItem[] }) {
       
       {/* Summary Table */}
       <div className="bg-white rounded-2xl shadow-xs border border-slate-200/60 overflow-hidden w-full">
-        <div className="bg-slate-700 px-6 py-3 border-b border-slate-600">
-          <h3 className="text-white font-bold text-sm tracking-wide uppercase">Pending/Delayed Task Count By FMS / Stage</h3>
+        <div className="bg-slate-700 px-6 py-3 border-b border-slate-600 print:bg-slate-200">
+          <h3 className="text-white font-bold text-sm tracking-wide uppercase print:text-slate-800">Pending/Delayed Task Count By FMS / Stage</h3>
         </div>
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-slate-200 text-xs">
+        <div className="overflow-x-auto print:overflow-visible">
+          <table className="min-w-full divide-y divide-slate-200 text-xs print:text-[9px]">
             <thead className="bg-slate-50">
               <tr>
-                <th className="px-4 py-3 text-left font-semibold text-slate-600">FMS Name</th>
-                <th className="px-4 py-3 text-left font-semibold text-slate-600">Stage / Checkpoint</th>
-                <th className="px-4 py-3 text-left font-semibold text-slate-600">Stage Owner (Who)</th>
-                <th className="px-4 py-3 text-left font-semibold text-slate-600">Amount</th>
-                <th className="px-4 py-3 text-left font-semibold text-slate-600">Payment Method</th>
-                <th className="px-4 py-3 text-center font-semibold text-slate-600">Max Delay (Days)</th>
-                <th className="px-4 py-3 text-center font-semibold text-amber-600">Currently Pending</th>
-                <th className="px-4 py-3 text-center font-semibold text-rose-600">Completed Late</th>
+                <th className="px-4 py-3 print:px-2 text-left font-semibold text-slate-600 print:px-2">FMS Name</th>
+                <th className="px-4 py-3 print:px-2 text-left font-semibold text-slate-600">Stage / Checkpoint</th>
+                <th className="px-4 py-3 print:px-2 text-left font-semibold text-slate-600">Stage Owner (Who)</th>
+                <th className="px-4 py-3 print:px-2 text-left font-semibold text-slate-600">Amount</th>
+                <th className="px-4 py-3 print:px-2 text-left font-semibold text-slate-600">Payment Method</th>
+                <th className="px-4 py-3 print:px-2 text-center font-semibold text-slate-600">Max Delay (Days)</th>
+                <th className="px-4 py-3 print:px-2 text-center font-semibold text-amber-600">Currently Pending</th>
+                <th className="px-4 py-3 print:px-2 text-center font-semibold text-rose-600">Completed Late</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 bg-white">
@@ -388,14 +393,14 @@ function DelayedTaskReport({ items }: { items: PurchasePipelineItem[] }) {
               ) : (
                 Object.values(summaryByStage).map((row: any, idx) => (
                   <tr key={idx} className="hover:bg-slate-50">
-                    <td className="px-4 py-3 text-slate-700 font-semibold">{row.sheet}</td>
-                    <td className="px-4 py-3 text-slate-900 font-medium">{row.stage}</td>
-                    <td className="px-4 py-3 text-slate-700">{row.owner}</td>
-                    <td className="px-4 py-3 font-mono text-slate-600">{row.amount > 0 ? `₹${row.amount.toLocaleString('en-IN')}` : '-'}</td>
-                    <td className="px-4 py-3 text-slate-600">{row.paymentMethod}</td>
-                    <td className="px-4 py-3 text-center font-bold text-rose-600">{row.maxDelay ? row.maxDelay.toFixed(1) : '-'}</td>
-                    <td className="px-4 py-3 text-center font-bold text-amber-600">{row.pendingCount}</td>
-                    <td className="px-4 py-3 text-center font-bold text-rose-600">{row.completedDelayCount}</td>
+                    <td className="px-4 py-3 print:px-2 text-slate-700 font-semibold">{row.sheet}</td>
+                    <td className="px-4 py-3 print:px-2 text-slate-900 font-medium">{row.stage}</td>
+                    <td className="px-4 py-3 print:px-2 text-slate-700">{row.owner}</td>
+                    <td className="px-4 py-3 print:px-2 font-mono text-slate-600">{row.amount > 0 ? `₹${row.amount.toLocaleString('en-IN')}` : '-'}</td>
+                    <td className="px-4 py-3 print:px-2 text-slate-600">{row.paymentMethod}</td>
+                    <td className="px-4 py-3 print:px-2 text-center font-bold text-rose-600">{row.maxDelay ? row.maxDelay.toFixed(1) : '-'}</td>
+                    <td className="px-4 py-3 print:px-2 text-center font-bold text-amber-600">{row.pendingCount}</td>
+                    <td className="px-4 py-3 print:px-2 text-center font-bold text-rose-600">{row.completedDelayCount}</td>
                   </tr>
                 ))
               )}
@@ -484,7 +489,7 @@ export default function PurchaseFMSView() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-white p-6 rounded-2xl shadow-xs border border-slate-100/60">
+      <div className="bg-white p-6 rounded-2xl shadow-xs border border-slate-100/60 print:hidden">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
@@ -917,7 +922,7 @@ export default function PurchaseFMSView() {
       )}
 
       {viewMode === 'report' && (
-        <DelayedTaskReport items={items} />
+        <DelayedTaskReport items={items} dateStart={dateStart} dateEnd={dateEnd} />
       )}
     </div>
   );
